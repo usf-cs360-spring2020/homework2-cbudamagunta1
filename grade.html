@@ -6,7 +6,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Chaitrika Budamagunta - H2</title>
+    <title>Chaitrika Budamagunta - H1</title>
 
     <!-- Load Bulma from CDN: https://bulma.io/ -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
@@ -37,7 +37,7 @@
   <nav class="navbar is-danger" role="navigation" aria-label="main navigation">
     <div class="container">
       <div class="navbar-brand">
-        <a class="navbar-item is-active" href="index.html">
+        <a class="navbar-item" href="index.html">
           <span class="icon"><i class="fas fa-home"></i></span>
           <span>Home</span>
         </a>
@@ -51,7 +51,11 @@
       <div id="main-menu" class="navbar-menu has-text-weight-medium">
         <!-- Left navbar items -->
         <div class="navbar-start">
-          <a class="navbar-item" href="data.html" title="Data">
+          <a class="navbar-item" href="index.html" title="Home">
+            <span class="icon"><i class="fas fa-table"></i></span>
+            <span>Home</span>
+          </a>
+          <a class="navbar-item" href="index.html" title="Data">
             <span class="icon"><i class="fas fa-table"></i></span>
             <span>Data</span>
           </a>
@@ -68,7 +72,7 @@
         <!-- Right navbar items -->
         <div class="navbar-end">
 
-          <a class="navbar-item" href="grade.html" title="Grade">
+          <a class="navbar-item is-active" href="grade.html" title="Grade">
             <span class="icon"><i class="fas fa-tasks"></i></span>
             <span>Grade</span>
           </a>
@@ -86,9 +90,39 @@
     <div class="container">
       <!-- Begin page content -->
       <div class="content">
-        <h1 class="title">
-          Homework Two
+        <h1 class="title" id="grade">
+          Grade
         </h1>
+
+         <table class="table is-hoverable is-bordered grades">
+           <thead>
+             <tr>
+               <th>Letter</th>
+               <th>Done?</th>
+               <th>Description</th>
+             </tr>
+           </thead>
+
+           <tbody>
+             <tr>
+               <td>B</td>
+               <td><i class="has-text-danger fas fa-check-circle"></i></td>
+               <td>
+                 ~Prototype and implement both a bubble chart and normalized heatmap.<br><br>
+
+                 ~Prototype a bubble chart in Tableau Desktop and then implement that visualization in D3.js version 5.<br>
+                 ~The bubble chart uses horizontal position, vertical position, circle area, and circle color to encode
+                 4 different columns from the dataset.<br>
+                 ~The prototype and D3.js versions use the exact same encodings.<br><br>
+
+                 ~Prototype a normalized heatmap in Tableau Desktop and then implement that visualization in D3.js version 5.<br>
+                 ~Normalize the values in each column; use feature scaling on each column before visualizing on the heatmap.<br>
+                 ~The prototype and D3.js versions use the exact same encodings.
+               </td>
+             </tr>
+           </tbody>
+         </table>
+
 
 
       </div>

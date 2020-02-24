@@ -1,0 +1,35 @@
+/*
+* Custom styling
+*/
+svg {
+  width: 960px;
+  height: 500px;
+}
+
+p#caption {
+  font-size: 12px;
+}
+
+#plot {
+  font-weight: lighter;
+}
+
+#x-axis text,
+#y-axis text {
+  font-size: 10pt;
+  fill: grey;
+}
+
+#x-axis line,
+#grid-axis line  {
+  fill: none;
+  stroke: #f5f5f5;
+}
+
+#x-axis path,
+#y-axis path,
+#grid-axis path,
+#y-axis line {
+  fill: none;
+  stroke: #f5f5f5;
+}
