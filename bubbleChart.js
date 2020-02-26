@@ -29,12 +29,12 @@ const scales = {
 };
 
 scales.x.range([0, width-margin.left-margin.right]);
-scales.x.domain([0, 0.45]);
+scales.x.domain([0, 0.50]);
 
 scales.y.range([height-margin.top-margin.bottom, 0]);
 scales.y.domain([0, 0.10]);
 
-scales.r.range([1, 15]);
+scales.r.range([3, 15]);
 scales.r.domain([15525, 174059]);
 
 scales.fill.domain([1, 6, 12]);
@@ -59,7 +59,7 @@ function drawBubbleAxis() {
   let xAxis = d3.axisBottom(scales.x);
   let yAxis = d3.axisLeft(scales.y);
 
-  xAxis.ticks(10).tickSizeOuter(0);
+  xAxis.ticks(11).tickSizeOuter(0);
   yAxis.ticks(11).tickSizeOuter(0);
 
   xGroup.attr("transform", "translate(0," + plotHeight + ")");
@@ -227,7 +227,7 @@ function drawBubbles(data) {
       .style("stroke", "white")
       .style("fill", d => scales.fill(d.tier));
 
-      drawLabels(data);
+      //drawLabels(data);
 }
 
 
