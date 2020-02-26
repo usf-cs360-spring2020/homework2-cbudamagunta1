@@ -18,6 +18,11 @@ p#buttons {
   font-weight: lighter;
 }
 
+#labels {
+  font-size: 8px;
+  /* stroke: grey; */
+}
+
 #x-axis text,
 #y-axis text {
   font-size: 10pt;
