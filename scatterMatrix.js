@@ -13,127 +13,47 @@ plot.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 /* LOAD THE DATA */
 d3.csv("mrc_table2.csv", parseScatterData).then(drawChart);
 
-
+/*
+* Draw the Plot
+*/
 function drawChart(data){
 
   /* SCALES */
 
-  let bounds = svg.node().getBoundingClientRect();
-  let plotWidth = bounds.width - margin.right - margin.left;
-  let plotHeight = bounds.height - margin.top - margin.bottom;
+  const bounds = svg.node().getBoundingClientRect();
+  const plotWidth = bounds.width - margin.right - margin.left;
+  const plotHeight = bounds.height - margin.top - margin.bottom;
 
-  let xScale = data.map(c => d3.scaleLinear()
-      .domain(d3.extent(data, data => data[c]))
+  const xScale = data.map(c => d3.scaleLinear()
+      .domain(d3.extent(data, d => d[c]))
       .range([plotHeight, 0])
       .nice());
 
-  let yScale = xScale.map(xScale => xScale.copy().range([0, plotWidth]))
+  const yScale = xScale.map(x => x.copy().range([0, plotWidth]))
 
-  let zScale = d3.scaleOrdinal()
+  const zScale = d3.scaleOrdinal()
     .domain(data.map(d => d.iclevel))
-    .range(d3.schemeCategory10);
+    .range(d3.interpolateBlues);
 
 
   /* AXES */
 
-  let xGroup = plot.append("g").attr("id", "x-axis").attr('class', 'axis');
-  let yGroup = plot.append("g").attr("id", "y-axis").attr('class', 'axis');
+  const xGroup = plot.append("g").attr("id", "x-axis").attr('class', 'axis');
+  const yGroup = plot.append("g").attr("id", "y-axis").attr('class', 'axis');
 
-  let xAxis = d3.axisBottom();
-  let yAxis = d3.axisLeft();
-
-  yAxis.ticks(5, 's').tickSizeOuter(0);
+  const xAxis = d3.axisBottom(xScale);
+  const yAxis = d3.axisLeft(yScale);
 
   xGroup.attr("transform", "translate(0," + plotHeight + ")");
   xGroup.call(xAxis);
   yGroup.call(yAxis);
 
-  const gridAxis = d3.axisLeft().tickSize(-plotWidth).tickFormat('').ticks(5);
-  let gridGroup = plot.append("g").attr("id", "grid-axis")
-    .attr('class', 'axis')
-    .call(gridAxis);
-
-
-  /* AXIS TITLES */
-
-  const xMiddle = margin.left + midpoint(regionScale.range());
-  const yMiddle = margin.top + midpoint(countScale.range());
-
-  const xTitle = svg.append('text')
-    .attr('class', 'axis-title')
-    .text('GEO Region');
-
-  xTitle.attr('x', xMiddle);
-  xTitle.attr('y', 30);
-  xTitle.attr('dy', -8);
-  xTitle.attr('text-anchor', 'middle');
-
-  const yTitleGroup = svg.append('g');
-  yTitleGroup.attr('transform', translate(4, yMiddle));
-
-  const yTitle = yTitleGroup.append('text')
-    .attr('class', 'axis-title')
-    .text('Passenger Count');
-
-  yTitle.attr('x', 0);
-  yTitle.attr('y', 0);
-
-  yTitle.attr('dy', 15);
-  yTitle.attr('text-anchor', 'middle');
-  yTitle.attr('transform', 'rotate(-90)');
-
-
-  /* LEGEND */
-
-  const legendGroup = svg.append('g').attr('id', 'legend');
-  legendGroup.attr('transform', translate(margin.left + 40, 50));
-  const title = legendGroup.append('text')
-      .attr('class', 'legend-title')
-      .text('Price Category Code');
-
-  title.attr('dy', 12);
-
-  const legendbox = legendGroup.append('rect')
-    .attr('x', 0)
-    .attr('y', 20)
-    .attr('width', 140)
-    .attr('height', 75)
-    .style('fill', 'none');
-
-  legendGroup.append('rect')
-    .attr('x', 10)
-    .attr('y', 30)
-    .attr('width', 20)
-    .attr('height', 20)
-    .style('fill', '6a9e59');
-
-  legendGroup.append('text')
-      .attr('class', 'legend-title')
-      .attr('x', 40)
-      .attr('y', 45)
-      .text('Low Fare');
-
-  legendGroup.append('rect')
-    .attr('x', 10)
-    .attr('y', 60)
-    .attr('width', 20)
-    .attr('height', 20)
-    .style('fill', '5679a3');
-
-  legendGroup.append('text')
-      .attr('class', 'legend-title')
-      .attr('x', 40)
-      .attr('y', 75)
-      .text('Other');
-
-      drawScatter(data);
-
+  //drawScatter(data);
 }
 
 
-
 /*
-* Draw the Scatter Chart
+* Draw the Data Scatter
 */
 function drawScatter(data) {
 

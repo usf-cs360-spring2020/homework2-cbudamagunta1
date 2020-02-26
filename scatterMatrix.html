@@ -76,7 +76,7 @@
                  <!-- <span class="icon"><i class="fas fa-chart-area"></i></span> -->
                  <span>Heatmap</span>
                </a>
-               <a class="navbar-item" href="scatterMatrix.html">
+               <a class="navbar-item is-active" href="scatterMatrix.html">
                  <!-- <span class="icon"><i class="fas fa-chart-pie"></i></span> -->
                  <span>Scatter Plot Matrix</span>
                </a>
@@ -91,7 +91,7 @@
             <span class="icon"><i class="fas fa-tasks"></i></span>
             <span>Grade</span>
           </a>
-          <a class="navbar-item is-active" href="about.html" title="About">
+          <a class="navbar-item" href="about.html" title="About">
             <span class="icon"><i class="fas fa-info-circle"></i></span>
             <span>About</span>
           </a>
@@ -105,41 +105,31 @@
     <div class="container">
       <!-- Begin page content -->
       <div class="content">
-        <h1 class="title"id="about">
-          About
+        <h1 class="title">
+          Scatter Plot Matrix
         </h1>
 
-        <article class="media">
-          <figure class="media-left">
-            <p class="image is-128x128"><img class="is-rounded" src="chaitrika.jpeg"></p>
-          </figure>
+        <h2>Student Earnings Based on College Tier and Parental Earning Quintiles</h2>
+        <p>Scatter Plot Matrix comparing:</p>
+        <ul>
+          <li>Tier</li>
+          <li>KRankParQ5 - Mean Kid Earnings Rank Conditional on Parents in Quintile 5</li>
+          <li>KRankParQ1 - Mean Kid Earnings Rank Conditional on Parents in Quintile 1</li>
+          <li>KMedian - Median Child Individual Earnings in 2014</li>
+          <li>Mobility Rate</li>
+        </ul>
 
-          <div class="media-content">
-            <div class="content">
-              <p>
-                <strong>Chaitrika Budamagunta</strong><br/>
-                CS Major, <a href="https://www.usfca.edu/">University of San Francisco</a><br/>
-                <em>Expected Graduation: 2020</em><br/>
-                <i class="fas fa-envelope"></i> <a href="mailto:username@dons.usfca.edu">cbudamagunta@dons.usfca.edu</a>
-              </p>
+          <p>Color encoding shows whether it is a four-year, two-year, or less than two-year school<br>
+          The data is filtered on State, only looking at colleges in CA</p>
 
-              <p>
-                My name is Chay, I am a computer science major and a theater minor, and I love finding ways to blend tech and art.
-              </p>
+        <p><img src="Prototype2.png"></p>
+        <p id="caption"><strong>Chaitrika Budamagunta</strong><br>
+          <strong>Dataset:</strong> “Baseline Cross-Sectional Estimates of Child and Parent Income Distributions by College”
+          from the <a href="https://opportunityinsights.org/paper/mobilityreportcards/">Mobility Report Cards: The Role of Colleges in Intergenerational Mobility</a> project
+          from <a href="https://opportunityinsights.org/">Opportunity Insights.</a>
+        </p>
+      </div>
 
-              <div class="heading">Skills</div>
-              <div class="tags">
-                <span class="tag">Python</span>
-                <span class="tag">C</span>
-                <span class="tag">Java</span>
-                <span class="tag">JavaScript</span>
-                <span class="tag">HTML</span>
-                <span class="tag">CSS</span>
-              </div>
-            </div>
-          </div>
-        </article>
-        <!-- End profile box -->
 
       </div>
       <!-- End page content -->
