@@ -1,91 +1,79 @@
 const width = 960;
-const height = 500;
+const height = 600;
 
-const margin = {
+let quintiles = ["Fraction of Parents in Q1", "Fraction of Parents in Q2", "Fraction of Parents in Q3",
+  "Fraction of Parents in Q4", "Fraction of Parents in Q5"];
+
+const heatMargin = {
   top: 40,
   bottom: 50,
-  left: 70,
+  left: 150,
   right: 30
 };
 
 
 /* PLOT */
-let bubbleSvg = d3.select("body").select("svg#BubbleVis");
-const bubblePlot = bubbleSvg.append("g").attr("id", "plot");
+let heatSvg = d3.select("body").select("svg#HeatVis");
+const heatPlot = heatSvg.append("g").attr("id", "plot");
 
-bubblePlot.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+heatPlot.attr("transform", "translate(" + heatMargin.left + "," + heatMargin.top + ")");
 
 
 /* SCALES */
-let bounds = bubbleSvg.node().getBoundingClientRect();
-let plotWidth = bounds.width - margin.right - margin.left;
-let plotHeight = bounds.height - margin.top - margin.bottom;
+let bounds = heatSvg.node().getBoundingClientRect();
+let plotWidth = bounds.width - heatMargin.right - heatMargin.left;
+let plotHeight = bounds.height - heatMargin.top - heatMargin.bottom;
 
-const scales = {
-  x: d3.scaleLinear(),
-  y: d3.scaleLinear(),
-  r: d3.scaleSqrt(),
-  fill: d3.scaleDiverging(d3.interpolateRdYlGn)
+const heatScales = {
+  x: d3.scaleBand(),
+  y: d3.scaleBand(),
+  color: d3.scaleSequential(d3.interpolateRdYlGn)
 };
 
-scales.x.range([0, width-margin.left-margin.right]);
-scales.x.domain([0, 0.45]);
+heatScales.x.range([0, width - heatMargin.left - heatMargin.right]);
+heatScales.x.domain(quintiles);
+heatScales.x.rangeRound([0, plotWidth]);
+heatScales.x.paddingInner(0.1);
 
-scales.y.range([height-margin.top-margin.bottom, 0]);
-scales.y.domain([0, 0.10]);
+heatScales.y.range([height - heatMargin.top - heatMargin.bottom, 0]);
+//heatScales.y.domain();
 
-scales.r.range([1, 15]);
-scales.r.domain([15525, 174059]);
-
-scales.fill.domain([1, 6, 12]);
+heatScales.color.domain([0.0358, 0.6900]);
 
 
 /* PLOT SETUP */
-drawBubbleAxis();
-drawBubbleTitles();
-drawBubbleLegends();
+//drawHeatAxis();
+drawHeatTitles();
+drawHeatLegend();
 
 
 /* LOAD THE DATA */
-d3.csv("mrc_table2.csv", parseBubbleData).then(drawBubbles);
+d3.csv("mrc_table2.csv", parseHeatmapData).then(drawHeatmap);
 
 
 /* AXES */
-function drawBubbleAxis() {
-
-  let xGroup = bubblePlot.append("g").attr("id", "x-axis").attr('class', 'axis');
-  let yGroup = bubblePlot.append("g").attr("id", "y-axis").attr('class', 'axis');
-
-  let xAxis = d3.axisBottom(scales.x);
-  let yAxis = d3.axisLeft(scales.y);
-
-  xAxis.ticks(10).tickSizeOuter(0);
-  yAxis.ticks(11).tickSizeOuter(0);
-
-  xGroup.attr("transform", "translate(0," + plotHeight + ")");
-  xGroup.call(xAxis);
-
-  yGroup.call(yAxis);
-
-  const gridYAxis = d3.axisLeft(scales.y).tickSize(-plotWidth).tickFormat('').ticks(11);
-  let gridYGroup = bubblePlot.append("g").attr("id", "grid-axis")
-    .attr('class', 'axis')
-    .call(gridYAxis);
-
-  const gridXAxis = d3.axisBottom(scales.x).tickSize(plotHeight).tickFormat('').ticks(10);
-  let gridXGroup = bubblePlot.append("g").attr("id", "grid-axis")
-    .attr('class', 'axis')
-    .call(gridXAxis);
-}
+// function drawHeatAxis() {
+//
+//   let xGroup = heatPlot.append("g").attr("id", "x-axis").attr('class', 'axis');
+//   let yGroup = heatPlot.append("g").attr("id", "y-axis").attr('class', 'axis');
+//
+//   let xAxis = d3.axisBottom(heatScales.x).tickPadding(0);
+//   let yAxis = d3.axisLeft(heatScales.y).tickPadding(0);
+//
+//   xGroup.attr("transform", "translate(0," + plotHeight + ")");
+//   xGroup.call(xAxis);
+//
+//   yGroup.call(yAxis);
+// }
 
 
 /* AXIS TITLES */
-function drawBubbleTitles() {
+function drawHeatTitles() {
 
-    const xMiddle = margin.left + midpoint(scales.x.range());
-    const yMiddle = margin.top + midpoint(scales.y.range());
+    const xMiddle = heatMargin.left + midpoint(heatScales.x.range());
+    const yMiddle = heatMargin.top + midpoint(heatScales.y.range());
 
-    const xTitle = bubbleSvg.append('text')
+    const xTitle = heatSvg.append('text')
       .attr('class', 'axis-title')
       .text('Fraction of Parents in Quintile 1');
 
@@ -94,7 +82,7 @@ function drawBubbleTitles() {
     xTitle.attr('dy', -4);
     xTitle.attr('text-anchor', 'middle');
 
-    const yTitleGroup = bubbleSvg.append('g');
+    const yTitleGroup = heatSvg.append('g');
     yTitleGroup.attr('transform', translate(4, yMiddle));
 
     const yTitle = yTitleGroup.append('text')
@@ -111,36 +99,17 @@ function drawBubbleTitles() {
 
 
 /* LEGEND */
-function drawBubbleLegends(){
+function drawHeatLegend(){
 
-  //Circle
-  const legendWidth = 100;
+  const legendWidth = 250;
   const legendHeight = 20;
 
-  const circleGroup = bubbleSvg.append('g').attr('id', 'circle-legend');
-  circleGroup.attr('transform', translate(width - margin.right - legendWidth - 30, margin.top + 80))
-
-  // https://d3-legend.susielu.com/#size-linear
-  const legendSize = d3.legendSize()
-    .scale(scales.r)
-    .shape('circle')
-    .cells(4)
-    .ascending(false)
-    .shapePadding(8)
-    .labelOffset(10)
-    .labelFormat("d")
-    .title('Mean Kid Earnings')
-    .orient('vertical');
-
-  circleGroup.call(legendSize);
-
-  //Color
-  const colorGroup = bubbleSvg.append('g').attr('id', 'color-legend');
-  colorGroup.attr('transform', translate(width - margin.right - legendWidth - 5, margin.top + 5));
+  const colorGroup = heatSvg.append('g').attr('id', 'color-legend');
+  colorGroup.attr('transform', translate(width - heatMargin.right - legendWidth -20, heatMargin.top + 10));
 
   const title = colorGroup.append('text')
     .attr('class', 'axis-title')
-    .text('Tier');
+    .text('Fraction of Parents in Given Quintile');
 
   title.attr('dy', 12);
 
@@ -150,30 +119,30 @@ function drawBubbleLegends(){
     .attr('width', legendWidth)
     .attr('height', legendHeight);
 
-  const colorDomain = [d3.min(scales.fill.domain()), d3.max(scales.fill.domain())];
-  scales.percent = d3.scaleLinear()
+  const colorDomain = [d3.min(heatScales.color.domain()), d3.max(heatScales.color.domain())];
+  heatScales.percent = d3.scaleLinear()
     .range([0, 100])
     .domain(colorDomain);
 
-  const defs = bubbleSvg.append('defs');
+  const defs = heatSvg.append('defs');
 
   defs.append('linearGradient')
     .attr('id', 'gradient')
     .selectAll('stop')
-    .data(scales.fill.ticks())
+    .data(heatScales.color.ticks())
     .enter()
     .append('stop')
-    .attr('offset', d => scales.percent(d) + '%')
-    .attr('stop-color', d => scales.fill(d));
+    .attr('offset', d => heatScales.percent(d) + '%')
+    .attr('stop-color', d => heatScales.color(d));
 
   colorbox.attr('fill', 'url(#gradient)');
 
-  scales.legend = d3.scaleLinear()
+  heatScales.legend = d3.scaleLinear()
     .domain(colorDomain)
     .range([0, legendWidth]);
 
-  const legendAxis = d3.axisBottom(scales.legend)
-    .tickValues(scales.fill.domain())
+  const legendAxis = d3.axisBottom(heatScales.legend)
+    .tickValues(heatScales.color.domain())
     .tickSize(legendHeight)
     .tickSizeOuter(0);
 
@@ -184,138 +153,128 @@ function drawBubbleLegends(){
 }
 
 
-/* LABELS */
-function drawLabels(data) {
-  // place the labels in their own group
-  const labelGroup = bubblePlot.append('g').attr('id', 'labels');
-
-  // create data join and enter selection
-  const labels = labelGroup.selectAll('text')
-    .data(data)
-    .enter()
-    .filter(d => d.label)
-    .append('text');
-
-  labels.text(d => d.name);
-
-  labels.attr('x', d => scales.x(d.parQ1) + 20);
-  labels.attr('y', d => scales.y(d.mobility) + 16);
-
-  labels.attr('text-anchor', 'middle');
-  labels.attr('dy', d => -(scales.r(d.meanK) + 2));
-}
-
-
 /*
-* Draw the bubbles
+* Draw the heatmap
 */
-function drawBubbles(data) {
+function drawHeatmap(data) {
 
-  data = data.filter(row => row.state === "CA");
-  data.sort((a, b) => b.meanK - a.meanK);
+  console.log(data.length);
 
-  const bubbleGroup = bubblePlot.append('g').attr('id', 'bubbles');
+  data = data.filter(function(row) {
+    return row["tier_name"] === "Ivy Plus" ||
+        row["tier_name"] === "Other elite schools (public and private)" ||
+       row["tier_name"] === "Highly selective public" ||
+       row["tier_name"] === "Highly selective private";
+  });
 
-  const bubbles = bubbleGroup
-    .selectAll("circle")
+  console.log(data.length);
+
+  data = data.sort(function(a, b) {
+    return a["name"] - b["name"];
+  });
+
+
+  let colleges = data.map(row => row.name);
+  heatScales.y.domain(colleges);
+
+
+  let xGroup = heatPlot.append("g").attr("id", "x-axis").attr('class', 'axis');
+  let yGroup = heatPlot.append("g").attr("id", "y-axis").attr('class', 'axis');
+
+  let xAxis = d3.axisBottom(heatScales.x).tickPadding(0);
+  let yAxis = d3.axisLeft(heatScales.y).tickPadding(0);
+
+  xGroup.attr("transform", "translate(0," + plotHeight + ")");
+  xGroup.call(xAxis);
+
+  yGroup.call(yAxis);
+
+
+  // let values = [data.parQ1, data.parQ2, data.parQ3, data.parQ4, data.parQ5];
+  // let merged = d3.merge(values);
+
+
+  // create one group per row
+  let rows = heatPlot.selectAll("g.cell")
     .data(data)
     .enter()
-    .append("circle")
-      .attr("cx", d => scales.x(d.parQ1))
-      .attr("cy", d => scales.y(d.mobility))
-      .attr("r", d => scales.r(d.meanK))
-      .style("stroke", "white")
-      .style("fill", d => scales.fill(d.tier));
+    .append("g");
 
-      drawLabels(data);
+  rows.attr("class", "cell");
+  rows.attr("id", d => "Region-" + d.RegionID);
+
+  // shift the entire group to the appropriate y-location
+  rows.attr("transform", function(d) {
+    return translate(0, heatScales.y(d["RegionName"]));
+  });
+
+  // create one rect per cell within row group
+  let cells = rows.selectAll("rect")
+    .data(d => d.values)
+    .enter()
+    .append("rect");
+
+  cells.attr("x", d => heatScales.x(d.parQ));
+  cells.attr("y", 0); // handled by group transform
+  cells.attr("width", heatScales.x.bandwidth());
+  cells.attr("height", heatScales.y.bandwidth());
+
+  // here is the color magic!
+  cells.style("fill", d => scale.color(d.value));
+  cells.style("stroke", d => scale.color(d.value));
+
+
+
+
 }
 
 
 /*
  * Convert values as necessary and discard unused columns
  */
-function parseBubbleData(row){
+function parseHeatmapData(row){
   let keep = {};
 
+  // keep.parQ = row["Measure Names"];
+  // keep.parQValue = parseFloat(row["Measure Values"]);
+  // keep.mobility = parseFloat(row["Mobility Rate"]);
+  // keep.name = row["Name"];
+
   keep.parQ1 = parseFloat(row["par_q1"]);
+  keep.parQ2 = parseFloat(row["par_q2"]);
+  keep.parQ3 = parseFloat(row["par_q3"]);
+  keep.parQ4 = parseFloat(row["par_q4"]);
+  keep.parQ5 = parseFloat(row["par_q5"]);
+
   keep.mobility = parseFloat(row["mr_kq5_pq1"]);
   keep.tier = parseInt(row["tier"]);
-  keep.meanK = parseInt(row["k_mean"]);
+  keep.tier_name = row["tier_name"];
+
   keep.state = row["state"];
-  keep.name = row["name"];
 
-
-  switch(row.name.toLowerCase()) {
-    case 'glendale career college':
-      keep.label = true;
+  switch(row["name"].toLowerCase()) {
+    case 'university of california, berkeley':
+      keep.name = "UC Berkeley";
       break;
 
-    case 'united education institute':
-      keep.label = true;
+    case 'university of california, irvine':
+      keep.name = "UC Irvine";
       break;
 
-    case 'pasadena city college':
-      keep.label = true;
+    case 'university of california, los angeles':
+      keep.name = "UC Los Angeles";
       break;
 
-    case 'california state university, los angeles':
-      keep.label = true;
+    case 'university of california, san diego':
+      keep.name = "UC San Diego";
       break;
 
-    case 'santa monica college':
-      keep.label = true;
-      break;
-
-    case 'westwood college - los angeles':
-      keep.label = true;
-      break;
-
-    case 'santa barbara business college':
-      keep.label = true;
-      break;
-
-    case 'westwood college - south bay':
-      keep.label = true;
-      break;
-
-    case 'imperial valley college':
-      keep.label = true;
-      break;
-
-    case 'college of the desert':
-      keep.label = true;
-      break;
-
-    case 'state center community college district':
-      keep.label = true;
-      break;
-
-    case "mount st. mary's college":
-      keep.label = true;
-      break;
-
-    case 'california state polytechnic university, pomona':
-      keep.label = true;
-      break;
-
-    case 'mti college':
-      keep.label = true;
-      break;
-
-    case 'art center college of design':
-      keep.label = true;
-      break;
-
-    case 'san jose state university':
-      keep.label = true;
-      break;
-
-    case 'musicians institute':
-      keep.label = true;
+    case 'university of california, santa barbara':
+      keep.name = "UC Santa Barbara";
       break;
 
     default:
-      keep.label = false;
+      keep.name = row["name"];
   }
 
   return keep;
