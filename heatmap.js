@@ -237,10 +237,10 @@ function parseHeatmapData(row){
 
   let keep = {};
 
-  keep.parQ = row['Measure Names'];
+  keep.parQ = row["Measure Names"];
+  keep.name = row["Name"];
   keep.parQValue = parseFloat(row["Measure Values"]);
   keep.mobility = parseFloat(row["Mobility Rate"]);
-  keep.name = row["Name"];
 
   console.log(keep);
 
