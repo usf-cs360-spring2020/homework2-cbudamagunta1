@@ -48,7 +48,8 @@ drawHeatLegend();
 
 
 /* LOAD THE DATA */
-d3.csv("mrc_table2.csv", parseHeatmapData).then(drawHeatmap);
+//d3.csv("mrc_table2.csv", parseHeatmapData).then(drawHeatmap);
+d3.csv("mrc_heatmap.csv", parseHeatmapData).then(drawHeatmap);
 
 
 /* AXES */
@@ -160,14 +161,12 @@ function drawHeatmap(data) {
 
   console.log(data.length);
 
-  data = data.filter(function(row) {
-    return row["tier_name"] === "Ivy Plus" ||
-        row["tier_name"] === "Other elite schools (public and private)" ||
-       row["tier_name"] === "Highly selective public" ||
-       row["tier_name"] === "Highly selective private";
-  });
-
-  console.log(data.length);
+  // data = data.filter(function(row) {
+  //   return row["tier_name"] === "Ivy Plus" ||
+  //       row["tier_name"] === "Other elite schools (public and private)" ||
+  //      row["tier_name"] === "Highly selective public" ||
+  //      row["tier_name"] === "Highly selective private";
+  // });
 
   data = data.sort(function(a, b) {
     return a["name"] - b["name"];
@@ -233,49 +232,54 @@ function drawHeatmap(data) {
  * Convert values as necessary and discard unused columns
  */
 function parseHeatmapData(row){
+
+  console.log(row);
+
   let keep = {};
 
-  // keep.parQ = row["Measure Names"];
-  // keep.parQValue = parseFloat(row["Measure Values"]);
-  // keep.mobility = parseFloat(row["Mobility Rate"]);
-  // keep.name = row["Name"];
+  keep.parQ = row['Measure Names'];
+  keep.parQValue = parseFloat(row["Measure Values"]);
+  keep.mobility = parseFloat(row["Mobility Rate"]);
+  keep.name = row["Name"];
 
-  keep.parQ1 = parseFloat(row["par_q1"]);
-  keep.parQ2 = parseFloat(row["par_q2"]);
-  keep.parQ3 = parseFloat(row["par_q3"]);
-  keep.parQ4 = parseFloat(row["par_q4"]);
-  keep.parQ5 = parseFloat(row["par_q5"]);
+  console.log(keep);
 
-  keep.mobility = parseFloat(row["mr_kq5_pq1"]);
-  keep.tier = parseInt(row["tier"]);
-  keep.tier_name = row["tier_name"];
-
-  keep.state = row["state"];
-
-  switch(row["name"].toLowerCase()) {
-    case 'university of california, berkeley':
-      keep.name = "UC Berkeley";
-      break;
-
-    case 'university of california, irvine':
-      keep.name = "UC Irvine";
-      break;
-
-    case 'university of california, los angeles':
-      keep.name = "UC Los Angeles";
-      break;
-
-    case 'university of california, san diego':
-      keep.name = "UC San Diego";
-      break;
-
-    case 'university of california, santa barbara':
-      keep.name = "UC Santa Barbara";
-      break;
-
-    default:
-      keep.name = row["name"];
-  }
+  // keep.parQ1 = parseFloat(row["par_q1"]);
+  // keep.parQ2 = parseFloat(row["par_q2"]);
+  // keep.parQ3 = parseFloat(row["par_q3"]);
+  // keep.parQ4 = parseFloat(row["par_q4"]);
+  // keep.parQ5 = parseFloat(row["par_q5"]);
+  //
+  // keep.mobility = parseFloat(row["mr_kq5_pq1"]);
+  // keep.tier = parseInt(row["tier"]);
+  // keep.tier_name = row["tier_name"];
+  //
+  // keep.state = row["state"];
+  //
+  // switch(row["name"].toLowerCase()) {
+  //   case 'university of california, berkeley':
+  //     keep.name = "UC Berkeley";
+  //     break;
+  //
+  //   case 'university of california, irvine':
+  //     keep.name = "UC Irvine";
+  //     break;
+  //
+  //   case 'university of california, los angeles':
+  //     keep.name = "UC Los Angeles";
+  //     break;
+  //
+  //   case 'university of california, san diego':
+  //     keep.name = "UC San Diego";
+  //     break;
+  //
+  //   case 'university of california, santa barbara':
+  //     keep.name = "UC Santa Barbara";
+  //     break;
+  //
+  //   default:
+  //     keep.name = row["name"];
+  // }
 
   return keep;
 }
