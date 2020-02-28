@@ -1,9 +1,6 @@
 const width = 960;
 const height = 800;
 
-// let quintiles = ["Fraction of Parents in Q1", "Fraction of Parents in Q2", "Fraction of Parents in Q3",
-//   "Fraction of Parents in Q4", "Fraction of Parents in Q5"];
-
 const heatMargin = {
   top: 75,
   bottom: 10,
@@ -129,7 +126,7 @@ function drawHeatmap(data) {
     return a["name"] - b["name"];
   });
 
-  /* AXIS TITLES */
+  /* DRAW AXIS */
   let colleges = data.map(row => row.name);
   heatScales.y.domain(colleges);
 
@@ -139,8 +136,8 @@ function drawHeatmap(data) {
   let xGroup = heatPlot.append("g").attr("id", "x-axis-heat").attr('class', 'axis');
   let yGroup = heatPlot.append("g").attr("id", "y-axis-heat").attr('class', 'axis');
 
-  let xAxis = d3.axisTop(heatScales.x).tickPadding(0);
-  let yAxis = d3.axisLeft(heatScales.y).tickPadding(0);
+  let xAxis = d3.axisTop(heatScales.x).tickPadding(0).tickSizeOuter(0);
+  let yAxis = d3.axisLeft(heatScales.y).tickPadding(0).tickSizeOuter(0);
 
   xGroup.attr('transform', translate(0, heatMargin.top - 75));
   xGroup.call(xAxis);
@@ -170,10 +167,22 @@ function drawHeatmap(data) {
   cells.attr("width", heatScales.x.bandwidth());
   cells.attr("height", heatScales.y.bandwidth());
 
-
   /* COLOR */
   cells.style("fill", d => heatScales.color(d.parQValue));
   cells.style("stroke", d => heatScales.color(d.parQValue));
+
+  /* DRAW MOBILITY RATES */
+  const mobilityGroup = heatPlot.append('g').attr('id', 'mobility');
+
+  const mobilityValues = mobilityGroup
+    .selectAll("text")
+    .data(data)
+    .enter()
+    .append("text")
+      .attr("x", d => heatScales.x("Fraction of Parents in Q1") + 80)
+      .attr("y", d => heatScales.y(d.name) + 25)
+      .text(d => d.mobility)
+      .style("fill", "black");
 }
 
 
@@ -191,7 +200,6 @@ function parseHeatmapData(row){
 
   return keep;
 }
-
 
 /*
  * From bubble.js example:
