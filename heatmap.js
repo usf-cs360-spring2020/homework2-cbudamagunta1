@@ -30,10 +30,7 @@ const heatScales = {
   color: d3.scaleSequential(d3.interpolateRdYlGn)
 };
 
-heatScales.x.range([0, width - heatMargin.left - heatMargin.right]);
-// heatScales.x.domain(quintiles);
-// heatScales.x.rangeRound([0, plotWidth]);
-
+heatScales.x.range([width - heatMargin.left - heatMargin.right, 0]);
 heatScales.y.range([height - heatMargin.top - heatMargin.bottom, 0]);
 
 heatScales.color.domain([0.0358, 0.6900]);
@@ -169,7 +166,7 @@ function drawHeatmap(data) {
     .append("rect");
 
   cells.attr("x", d => heatScales.x(d.parQ));
-  cells.attr("y", d => heatScales.y(d.name)); // handled by group transform
+  cells.attr("y", d => heatScales.y(d.name));
   cells.attr("width", heatScales.x.bandwidth());
   cells.attr("height", heatScales.y.bandwidth());
 
