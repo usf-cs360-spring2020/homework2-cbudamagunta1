@@ -57,7 +57,7 @@ function drawHeatTitles() {
     yTitle.attr('x', 0);
     yTitle.attr('y', 0);
 
-    yTitle.attr('dy', -365);
+    yTitle.attr('dy', -368);
     yTitle.attr('dx', 0);
 }
 
@@ -137,10 +137,12 @@ function drawHeatmap(data) {
   let yGroup = heatPlot.append("g").attr("id", "y-axis-heat").attr('class', 'axis');
 
   let xAxis = d3.axisTop(heatScales.x).tickPadding(0).tickSizeOuter(0);
-  let yAxis = d3.axisLeft(heatScales.y).tickPadding(0).tickSizeOuter(0);
+  let yAxis = d3.axisRight(heatScales.y).tickPadding(0).tickSizeOuter(0);
 
   xGroup.attr('transform', translate(0, heatMargin.top - 75));
   xGroup.call(xAxis);
+
+  yGroup.attr('transform', translate(-181, 0));
   yGroup.call(yAxis);
 
 
@@ -174,14 +176,16 @@ function drawHeatmap(data) {
   /* DRAW MOBILITY RATES */
   const mobilityGroup = heatPlot.append('g').attr('id', 'mobility');
 
+  let formatter = d3.format(".5f");
+
   const mobilityValues = mobilityGroup
     .selectAll("text")
     .data(data)
     .enter()
     .append("text")
-      .attr("x", d => heatScales.x("Fraction of Parents in Q1") + 80)
+      .attr("x", d => heatScales.x("Fraction of Parents in Q1") + 100)
       .attr("y", d => heatScales.y(d.name) + 25)
-      .text(d => d.mobility)
+      .text(d => formatter(d.mobility))
       .style("fill", "black");
 }
 
