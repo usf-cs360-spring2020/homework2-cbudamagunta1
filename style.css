@@ -1,9 +1,15 @@
 /*
 * Custom styling
 */
+
 svg {
   width: 960px;
   height: 500px;
+}
+
+svg#HeatVis {
+  width: 960px;
+  height: 750px;
 }
 
 p#caption {
@@ -20,7 +26,6 @@ p#buttons {
 
 #labels {
   font-size: 8px;
-  /* stroke: grey; */
 }
 
 #x-axis text,
@@ -29,7 +34,15 @@ p#buttons {
   fill: grey;
 }
 
+#x-axis-heat text,
+#y-axis-heat text {
+  font-size: 8pt;
+  /* fill: black; */
+  font-weight: bold;
+}
+
 #x-axis line,
+#x-axis-heat line,
 #grid-axis line  {
   fill: none;
   stroke: #f5f5f5;
@@ -37,8 +50,11 @@ p#buttons {
 
 #x-axis path,
 #y-axis path,
+#x-axis-heat path,
+#y-axis-heat path,
 #grid-axis path,
-#y-axis line {
+#y-axis line,
+#y-axis-heat line, {
   fill: none;
   stroke: #f5f5f5;
 }

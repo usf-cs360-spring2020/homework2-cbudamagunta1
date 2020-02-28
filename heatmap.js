@@ -1,14 +1,14 @@
 const width = 960;
-const height = 600;
+const height = 800;
 
-let quintiles = ["Fraction of Parents in Q1", "Fraction of Parents in Q2", "Fraction of Parents in Q3",
-  "Fraction of Parents in Q4", "Fraction of Parents in Q5"];
+// let quintiles = ["Fraction of Parents in Q1", "Fraction of Parents in Q2", "Fraction of Parents in Q3",
+//   "Fraction of Parents in Q4", "Fraction of Parents in Q5"];
 
 const heatMargin = {
-  top: 40,
-  bottom: 50,
-  left: 150,
-  right: 30
+  top: 75,
+  bottom: 10,
+  left: 180,
+  right: 10
 };
 
 
@@ -31,71 +31,40 @@ const heatScales = {
 };
 
 heatScales.x.range([0, width - heatMargin.left - heatMargin.right]);
-heatScales.x.domain(quintiles);
-heatScales.x.rangeRound([0, plotWidth]);
-heatScales.x.paddingInner(0.1);
+// heatScales.x.domain(quintiles);
+// heatScales.x.rangeRound([0, plotWidth]);
 
 heatScales.y.range([height - heatMargin.top - heatMargin.bottom, 0]);
-//heatScales.y.domain();
 
 heatScales.color.domain([0.0358, 0.6900]);
 
 
 /* PLOT SETUP */
-//drawHeatAxis();
 drawHeatTitles();
 drawHeatLegend();
 
 
 /* LOAD THE DATA */
-//d3.csv("mrc_table2.csv", parseHeatmapData).then(drawHeatmap);
 d3.csv("mrc_heatmap.csv", parseHeatmapData).then(drawHeatmap);
-
-
-/* AXES */
-// function drawHeatAxis() {
-//
-//   let xGroup = heatPlot.append("g").attr("id", "x-axis").attr('class', 'axis');
-//   let yGroup = heatPlot.append("g").attr("id", "y-axis").attr('class', 'axis');
-//
-//   let xAxis = d3.axisBottom(heatScales.x).tickPadding(0);
-//   let yAxis = d3.axisLeft(heatScales.y).tickPadding(0);
-//
-//   xGroup.attr("transform", "translate(0," + plotHeight + ")");
-//   xGroup.call(xAxis);
-//
-//   yGroup.call(yAxis);
-// }
 
 
 /* AXIS TITLES */
 function drawHeatTitles() {
 
-    const xMiddle = heatMargin.left + midpoint(heatScales.x.range());
     const yMiddle = heatMargin.top + midpoint(heatScales.y.range());
-
-    const xTitle = heatSvg.append('text')
-      .attr('class', 'axis-title')
-      .text('Fraction of Parents in Quintile 1');
-
-    xTitle.attr('x', xMiddle);
-    xTitle.attr('y', height);
-    xTitle.attr('dy', -4);
-    xTitle.attr('text-anchor', 'middle');
 
     const yTitleGroup = heatSvg.append('g');
     yTitleGroup.attr('transform', translate(4, yMiddle));
 
     const yTitle = yTitleGroup.append('text')
       .attr('class', 'axis-title')
-      .text('Mobility Rate');
+      .text('College Name');
 
     yTitle.attr('x', 0);
     yTitle.attr('y', 0);
 
-    yTitle.attr('dy', 15);
-    yTitle.attr('text-anchor', 'middle');
-    yTitle.attr('transform', 'rotate(-90)');
+    yTitle.attr('dy', -365);
+    yTitle.attr('dx', 0);
 }
 
 
@@ -106,7 +75,7 @@ function drawHeatLegend(){
   const legendHeight = 20;
 
   const colorGroup = heatSvg.append('g').attr('id', 'color-legend');
-  colorGroup.attr('transform', translate(width - heatMargin.right - legendWidth -20, heatMargin.top + 10));
+  colorGroup.attr('transform', translate(width - heatMargin.right - legendWidth -20, heatMargin.top - 70));
 
   const title = colorGroup.append('text')
     .attr('class', 'axis-title')
@@ -159,72 +128,55 @@ function drawHeatLegend(){
 */
 function drawHeatmap(data) {
 
-  console.log(data.length);
-
-  // data = data.filter(function(row) {
-  //   return row["tier_name"] === "Ivy Plus" ||
-  //       row["tier_name"] === "Other elite schools (public and private)" ||
-  //      row["tier_name"] === "Highly selective public" ||
-  //      row["tier_name"] === "Highly selective private";
-  // });
-
   data = data.sort(function(a, b) {
     return a["name"] - b["name"];
   });
 
-
+  /* AXIS TITLES */
   let colleges = data.map(row => row.name);
   heatScales.y.domain(colleges);
 
+  let quintiles = data.map(row => row.parQ);
+  heatScales.x.domain(quintiles);
 
-  let xGroup = heatPlot.append("g").attr("id", "x-axis").attr('class', 'axis');
-  let yGroup = heatPlot.append("g").attr("id", "y-axis").attr('class', 'axis');
+  let xGroup = heatPlot.append("g").attr("id", "x-axis-heat").attr('class', 'axis');
+  let yGroup = heatPlot.append("g").attr("id", "y-axis-heat").attr('class', 'axis');
 
-  let xAxis = d3.axisBottom(heatScales.x).tickPadding(0);
+  let xAxis = d3.axisTop(heatScales.x).tickPadding(0);
   let yAxis = d3.axisLeft(heatScales.y).tickPadding(0);
 
-  xGroup.attr("transform", "translate(0," + plotHeight + ")");
+  xGroup.attr('transform', translate(0, heatMargin.top - 75));
   xGroup.call(xAxis);
-
   yGroup.call(yAxis);
 
 
-  // let values = [data.parQ1, data.parQ2, data.parQ3, data.parQ4, data.parQ5];
-  // let merged = d3.merge(values);
-
-
-  // create one group per row
-  let rows = heatPlot.selectAll("g.cell")
+  /* CREATE CELLS */
+  let cols = heatPlot.selectAll("g.cell")
     .data(data)
     .enter()
     .append("g");
 
-  rows.attr("class", "cell");
-  rows.attr("id", d => "Region-" + d.RegionID);
+  cols.attr("class", "cell");
+  cols.attr("id", d => d.parQ);
 
-  // shift the entire group to the appropriate y-location
-  rows.attr("transform", function(d) {
-    return translate(0, heatScales.y(d["RegionName"]));
+  cols.attr("transform", function(d) {
+    return translate(0, heatScales.y(d.name));
   });
 
-  // create one rect per cell within row group
-  let cells = rows.selectAll("rect")
-    .data(d => d.values)
+  let cells = cols.selectAll("rect")
+    .data(data)
     .enter()
     .append("rect");
 
   cells.attr("x", d => heatScales.x(d.parQ));
-  cells.attr("y", 0); // handled by group transform
+  cells.attr("y", d => heatScales.y(d.name)); // handled by group transform
   cells.attr("width", heatScales.x.bandwidth());
   cells.attr("height", heatScales.y.bandwidth());
 
-  // here is the color magic!
-  cells.style("fill", d => scale.color(d.value));
-  cells.style("stroke", d => scale.color(d.value));
 
-
-
-
+  /* COLOR */
+  cells.style("fill", d => heatScales.color(d.parQValue));
+  cells.style("stroke", d => heatScales.color(d.parQValue));
 }
 
 
@@ -233,53 +185,12 @@ function drawHeatmap(data) {
  */
 function parseHeatmapData(row){
 
-  console.log(row);
-
   let keep = {};
 
   keep.parQ = row["Measure Names"];
   keep.name = row["Name"];
   keep.parQValue = parseFloat(row["Measure Values"]);
   keep.mobility = parseFloat(row["Mobility Rate"]);
-
-  console.log(keep);
-
-  // keep.parQ1 = parseFloat(row["par_q1"]);
-  // keep.parQ2 = parseFloat(row["par_q2"]);
-  // keep.parQ3 = parseFloat(row["par_q3"]);
-  // keep.parQ4 = parseFloat(row["par_q4"]);
-  // keep.parQ5 = parseFloat(row["par_q5"]);
-  //
-  // keep.mobility = parseFloat(row["mr_kq5_pq1"]);
-  // keep.tier = parseInt(row["tier"]);
-  // keep.tier_name = row["tier_name"];
-  //
-  // keep.state = row["state"];
-  //
-  // switch(row["name"].toLowerCase()) {
-  //   case 'university of california, berkeley':
-  //     keep.name = "UC Berkeley";
-  //     break;
-  //
-  //   case 'university of california, irvine':
-  //     keep.name = "UC Irvine";
-  //     break;
-  //
-  //   case 'university of california, los angeles':
-  //     keep.name = "UC Los Angeles";
-  //     break;
-  //
-  //   case 'university of california, san diego':
-  //     keep.name = "UC San Diego";
-  //     break;
-  //
-  //   case 'university of california, santa barbara':
-  //     keep.name = "UC Santa Barbara";
-  //     break;
-  //
-  //   default:
-  //     keep.name = row["name"];
-  // }
 
   return keep;
 }
